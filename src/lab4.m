@@ -1,0 +1,82 @@
+clear all
+clc
+%% input
+
+E = csvread('../data/example1.dat');
+k = 4; % Change k to the desired number of eigenvectors
+
+% E = csvread('../data/example2.dat');
+% k = 2; % Change k to the desired number of eigenvectors
+
+
+sigma = 1;
+
+
+% col1 = E(:,1);
+% col2 = E(:,2);
+% max_ids = max(max(col1,col2));
+% As= sparse(col1, col2, 1, max_ids, max_ids); 
+% A = full(As);
+% [v,D] = eig(A);
+% sort(diag(D));
+
+
+
+%% Adjacency matrix
+col1 = E(:,1);
+col2 = E(:,2);
+
+G = graph(col1, col2);
+d = distances(G);
+
+
+% Aii = 0
+A = exp(-(d.^2)./(2*sigma^2)) - eye(size(d));
+
+
+%% diagonal matrix
+D = diag(sum(A,2));
+L = D^(-1/2)*A*D^(-1/2);
+
+
+
+% Compute the eigenvectors and eigenvalues of L
+[V, D] = eig(L);
+
+% Extract eigenvalues from the diagonal matrix D
+eigenvalues = diag(D);
+
+% Sort eigenvalues in descending order
+[sorted_eigenvalues, indices] = sort(eigenvalues, 'descend');
+
+% Choose the k largest eigenvalues and corresponding eigenvectors
+selected_indices = indices(1:k);
+selected_eigenvectors = V(:, selected_indices);
+
+% Make the eigenvectors orthogonal (Gram-Schmidt process)
+orthogonal_eigenvectors = orth(selected_eigenvectors);
+
+% Form the matrix X by stacking the eigenvectors in columns
+X = orthogonal_eigenvectors;
+
+%% Y renormalising
+Y = X ./ sqrt(sum(X.^2, 2));
+
+
+%% k-means
+[idx, C] = kmeans(Y, k);
+
+
+%% assign
+
+clusters = cell(1, k);
+for i = 1:k
+    clusters{i} = find(idx == i);
+end
+
+%% display
+% Display or use the cluster information as needed
+color = [1 0 0; 0 1 0; 0 0 1; 1 0 1];
+% disp(clusters);
+figure
+h = plot(G,'NodeColor',color(idx,:));
