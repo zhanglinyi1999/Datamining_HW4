@@ -1,11 +1,14 @@
 clear all
 clc
 %% input
-% E = csvread('C:/Users/Linyi Zhang/Desktop/data_mining/HW4/Datamining_HW4/data/example1.dat');
 
 E = csvread('../data/example1.dat');
-
 k = 4; % Change k to the desired number of eigenvectors
+
+% E = csvread('../data/example2.dat');
+% k = 2; % Change k to the desired number of eigenvectors
+
+
 sigma = 1;
 
 
@@ -22,7 +25,6 @@ sigma = 1;
 %% Adjacency matrix
 col1 = E(:,1);
 col2 = E(:,2);
-max_ids = max(max(col1,col2));
 
 G = graph(col1, col2);
 d = distances(G);
@@ -67,9 +69,18 @@ Y = X ./ sqrt(sum(X.^2, 2));
 
 %% assign
 
-s = 
-
 clusters = cell(1, k);
 for i = 1:k
     clusters{i} = find(idx == i);
 end
+
+%% display
+% Display or use the cluster information as needed
+color = [1 0 0; 0 1 0; 0 0 1; 1 0 1];
+% disp(clusters);
+figure
+h = plot(G,'NodeColor',color(idx,:));
+
+
+figure 
+Sparsity_Pattern = plo

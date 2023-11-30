@@ -75,8 +75,51 @@ for i = 1:k
 end
 
 %% display
-% Display or use the cluster information as needed
-color = [1 0 0; 0 1 0; 0 0 1; 1 0 1];
+colors = [
+    1, 0, 0; % Red
+    0, 0, 1; % Blue
+    1, 1, 0; % Yellow
+    0, 1, 0; % Green
+];
 % disp(clusters);
 figure
-h = plot(G,'NodeColor',color(idx,:));
+h = plot(G,'NodeColor',colors(idx,:));
+
+
+figure 
+% Display the adjacency matrix as an image
+imagesc(A);
+% spy(A);
+colormap('gray'); % Set the colormap (optional, can choose different colormaps)
+colorbar; % Display colorbar (optional)
+
+% Add title and labels
+title('Adjacency Matrix');
+xlabel('Nodes');
+ylabel('Nodes');
+
+% Adjust aspect ratio to make cells square
+axis square;
+
+
+
+
+% Sort eigenvalues in ascending order
+[sorted_eigenvalues_ascend, indices_ascend] = sort(eigenvalues);
+
+% Find the index of the second smallest eigenvalue (Fiedler eigenvalue)
+fiedler_index = indices_ascend(2);
+
+% Extract the Fiedler vector corresponding to the second smallest eigenvalue
+fiedler_vector = V(:, fiedler_index);
+
+% Sort the Fiedler vector
+sorted_fiedler_vector = sort(fiedler_vector);
+
+% Plot the sorted Fiedler vector
+figure
+plot(sorted_fiedler_vector);
+xlabel('Index');
+ylabel('Value');
+title('Sorted Fiedler Vector');
+
